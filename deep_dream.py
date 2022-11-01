@@ -22,16 +22,19 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class Model(nn.Module):
 
-    def __init__(self, pretrained_model, final_layer):
+    def __init__(self, pretrained_model, feature_layers):
         super().__init__()
         self.pretrained_model = pretrained_model
-        self.final_layer = final_layer
+        self.feature_layers = feature_layers
 
     def forward(self, x):
+        features = []
         for i, layer in enumerate(self.pretrained_model.features):
             x = layer(x)
-            if i == self.final_layer:
-                return x
+            if i in self.feature_layers:
+                features.append(x)
+            if i == self.feature_layers[-1]:
+                return features
 
 
 def ascend(image, model, lower_clamp, upper_clamp, step_size=0.05, jitter=32):
@@ -40,8 +43,10 @@ def ascend(image, model, lower_clamp, upper_clamp, step_size=0.05, jitter=32):
         image = torch.roll(image, shifts=(shift_y, shift_x), dims=(2, 3))
         image.requires_grad = True
 
+    L = 0
     features = model(image)
-    L = torch.mean(features**2)
+    for feature in features:
+        L += torch.mean(feature**2)
     L.backward()
 
     with torch.no_grad():
@@ -109,8 +114,8 @@ def dream(random=False):
     pretrained_model = vgg19(weights=pretrained_weights)
 
     # 5, 10, 19, 28
-    final_layer = 28
-    model = Model(pretrained_model, final_layer)
+    feature_layers = [19]
+    model = Model(pretrained_model, feature_layers)
 
     preprocess = pretrained_weights.transforms()
     preprocess.crop_size = [image_height, image_width]
