@@ -84,8 +84,8 @@ def deepdream(image, epochs=10, octaves=4, octave_zoom=1.4):
     image_octaves = [preprocess(image)]
     for i in range(octaves):
         sh, sw = image_octaves[-1].shape[2:4]
-        sh = int(sh // octave_zoom)
-        sw = int(sw // octave_zoom)
+        sh = int(sh / octave_zoom)
+        sw = int(sw / octave_zoom)
         image_octave = resize(image_octaves[-1], (sh, sw))
         image_octaves.append(image_octave)
 
@@ -140,8 +140,8 @@ def dream():
     save_output(dreamed_image, image_name, output_folder)
 
 
-def dive(depth=5, zoom=1.2):
-    image = torch.rand((1, 3, 300, 300))
+def dive(depth=5, size=300, zoom=1.2):
+    image = torch.rand((1, 3, size, size))
     image_name = "Noise.jpg"
 
     image_height, image_width = image.shape[2:4]
@@ -153,7 +153,7 @@ def dive(depth=5, zoom=1.2):
         image_name_i = image_name[:-4] + "_" + str(i) + image_name[-4:]
         save_output(image, image_name_i, output_folder)
 
-        image = center_crop(image, (int(image_height // zoom), int(image_width // zoom)))
+        image = center_crop(image, (int(image_height / zoom), int(image_width / zoom)))
         image = resize(image, (image_height, image_width))
 
 
