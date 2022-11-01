@@ -13,8 +13,8 @@ interpreted using the existing training of the model.
 This can be exploited to generate some interesting looking images.
 
 <div align="center">
-  <img src="Images/JC.jpg" width="300">
-  <img src="DreamOutput/JC.jpg" width="300">
+  <img src="Images/JC.jpg" width="400">
+  <img src="DreamOutput/JC.jpg" width="400">
   <p>Input on the left, deep dreamed on the right.</p> 
 </div>
 
@@ -56,8 +56,8 @@ before sending the output back through the deep dreams again.
 This iteratve provess can be repeated multiple times to create more detailed images.
 
 <div align="center">
-  <img src="Images/Noise.jpg" width="200">
-  <img src="DiveOutput/Noise_0.jpg" width="200">
-  <img src="DiveOutput/Noise_4.jpg" width="200">
+  <img src="Images/Noise.jpg" width="300">
+  <img src="DiveOutput/Noise_0.jpg" width="300">
+  <img src="DiveOutput/Noise_4.jpg" width="300">
   <p>Random noise gets progressively more detailed at each iteration.</p> 
 </div>
