@@ -47,6 +47,7 @@ def ascend(image, model, lower_clamp, upper_clamp, step_size=0.05, jitter=32):
     features = model(image)
     for feature in features:
         L += torch.mean(feature**2)
+    L /= len(features)
     L.backward()
 
     with torch.no_grad():
@@ -83,8 +84,10 @@ def deepdream(image, model, preprocess, epochs=10, octaves=4, octave_zoom=1.4):
             detail = resize(detail, (sh, sw))
 
         input = image_octave + detail
-        for epoch in tqdm(range(1, epochs + 1)):
+        pbar = tqdm(range(1, epochs + 1))
+        for epoch in pbar:
             input = ascend(input, model, lower_clamp, upper_clamp)
+            pbar.set_postfix({"Octave": f"{i + 1}/{octaves + 1}"})
 
         detail = input - image_octave
 
@@ -113,8 +116,8 @@ def dream(random=False):
     pretrained_weights = VGG19_Weights.DEFAULT
     pretrained_model = vgg19(weights=pretrained_weights)
 
-    # 5, 10, 19, 28
-    feature_layers = [19]
+    # feature_layers = [5, 10, 19, 28]
+    feature_layers = [28]
     model = Model(pretrained_model, feature_layers)
 
     preprocess = pretrained_weights.transforms()

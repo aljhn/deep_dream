@@ -3,7 +3,7 @@
 Implementation of deep dreaming in PyTorch.
 Based on the original [blog](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html) and [repo](https://github.com/google/deepdream) from Google Research.
 
-Uses a VGG19 model pretrained on the ImageNet-1000 dataset.
+Uses a VGG19 model pretrained on the ImageNet-1K dataset.
 
 Deep CNN models are trained to recognize certain features in the training set.
 Because the training set has a finite number of data and data classes
