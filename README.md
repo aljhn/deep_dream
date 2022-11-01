@@ -56,8 +56,8 @@ before sending the output back through the deep dreams again.
 This iteratve provess can be repeated multiple times to create more detailed images.
 
 <div align="center">
-  <img src="Images/Noise.jpg" width="300">
-  <img src="DiveOutput/Noise_0.jpg" width="300">
-  <img src="DiveOutput/Noise_4.jpg" width="300">
+  <img src="Images/Noise.jpg" width="250">
+  <img src="DiveOutput/Noise_0.jpg" width="250">
+  <img src="DiveOutput/Noise_4.jpg" width="250">
   <p>Random noise gets progressively more detailed at each iteration.</p> 
 </div>
