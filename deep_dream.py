@@ -29,7 +29,7 @@ class Model(nn.Module):
 
     def forward(self, x):
         features = []
-        for i, layer in enumerate(self.pretrained_model.features):
+        for i, layer in enumerate(self.pretrained_model):
             x = layer(x)
             if i in self.feature_layers:
                 features.append(x)
@@ -60,13 +60,11 @@ def ascend(image, model, lower_clamp, upper_clamp, step_size=0.05, jitter=32):
     return image
 
 
-def deepdream(image, epochs=10, octaves=4, octave_zoom=1.4):
+def deepdream(image, feature_layers=[28], epochs=10, octaves=4, octave_zoom=1.4):
     pretrained_weights = VGG19_Weights.DEFAULT
     pretrained_model = vgg19(weights=pretrained_weights)
-
-    # feature_layers = [5, 10, 19, 28]
-    feature_layers = [28]
-    model = Model(pretrained_model, feature_layers)
+    model = Model(pretrained_model.features, feature_layers)
+    model.to(device)
 
     image_height, image_width = image.shape[2:4]
     preprocess = pretrained_weights.transforms()
@@ -90,6 +88,7 @@ def deepdream(image, epochs=10, octaves=4, octave_zoom=1.4):
         image_octaves.append(image_octave)
 
     detail = torch.zeros(image_octaves[-1].shape)
+    detail = detail.to(device)
     for i, image_octave in enumerate(reversed(image_octaves)):
         if i > 0:
             sh, sw = image_octave.shape[2:4]
@@ -142,6 +141,7 @@ def dream():
 
 def dive(depth=5, size=300, zoom=1.2):
     image = torch.rand((1, 3, size, size))
+    image = image.to(device)
     image_name = "Noise.jpg"
 
     image_height, image_width = image.shape[2:4]
