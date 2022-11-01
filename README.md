@@ -37,13 +37,13 @@ and higher-abstraction features at the deeper layers consisting of combinations 
 The final layer to stop the forward pass at will therefore determine the abstraction level of the dreams.
 
 <div align="center">
-  <img src="Images/Acer.jpg" width="600">
+  <img src="Images/Acer.jpg" width="800">
 </div>
 
 <div align="center">
-  <img src="DreamOutput/Acer5.jpg" width="150">
-  <img src="DreamOutput/Acer10.jpg" width="150">
-  <img src="DreamOutput/Acer19.jpg" width="150">
-  <img src="DreamOutput/Acer28.jpg" width="150">
+  <img src="DreamOutput/Acer5.jpg" width="400">
+  <img src="DreamOutput/Acer10.jpg" width="400">
+  <img src="DreamOutput/Acer19.jpg" width="400">
+  <img src="DreamOutput/Acer28.jpg" width="400">
   <p>Stopping at layer 5, 10, 19 and 28 in the VGG19 model.</p>
 </div>
