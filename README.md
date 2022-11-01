@@ -23,9 +23,27 @@ corresponding to a certain level of abstraction.
 The network might see some features that resembles things from the training set.
 These features are then amplified in the input image using gradient ascent
 with gradients computed using PyTorch autograd from the MSE loss of the features.
+The results are therefore highly dependent on the dataset.
 
 The original implementation also does some more tricks to get better image outputs:
 * Add random offsets to the image at each epoch. This confuses the model and results in it seeing more features.
 * Normalizing the gradients making the iterations more stable.
 * Ascend at different octaves. An octave in this context refers to a scaled version of the input image.
 
+## Feature Abstractions
+
+It is well known that CNNs learn low-abstraction features like edges and colors at the shallow layers
+and higher-abstraction features at the deeper layers consisting of combinations of the lower level features.
+The final layer to stop the forward pass at will therefore determine the abstraction level of the dreams.
+
+<div align="center">
+  <img src="Images/Acer.jpg" width="600">
+</div>
+
+<div align="center">
+  <img src="DreamOutput/Acer5.jpg" width="150">
+  <img src="DreamOutput/Acer10.jpg" width="150">
+  <img src="DreamOutput/Acer19.jpg" width="150">
+  <img src="DreamOutput/Acer28.jpg" width="150">
+  <p>Stopping at layer 5, 10, 19 and 28 in the VGG19 model.</p>
+</div>

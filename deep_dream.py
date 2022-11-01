@@ -40,10 +40,8 @@ def ascend(image, model, lower_clamp, upper_clamp, step_size=0.05, jitter=32):
         image = torch.roll(image, shifts=(shift_y, shift_x), dims=(2, 3))
         image.requires_grad = True
 
-    L = 0
     features = model(image)
-    for feature in features:
-        L += torch.mean(feature**2)
+    L = torch.mean(features**2)
     L.backward()
 
     with torch.no_grad():
@@ -86,8 +84,6 @@ def deepdream(image, model, preprocess, epochs=10, octaves=4, octave_zoom=1.4):
         detail = input - image_octave
 
     image = input
-
-    # Deprocess
     image = image * p_std + p_mean
     image = torch.clamp(image, 0, 1)
 
@@ -97,6 +93,7 @@ def deepdream(image, model, preprocess, epochs=10, octaves=4, octave_zoom=1.4):
 def dream(random=False):
     if random:
         image = torch.rand((1, 3, 300, 300))
+        image_name = "Noise.jpg"
     else:
         image_name = sys.argv[1]
         image_path = os.path.abspath(image_name)
@@ -111,6 +108,7 @@ def dream(random=False):
     pretrained_weights = VGG19_Weights.DEFAULT
     pretrained_model = vgg19(weights=pretrained_weights)
 
+    # 5, 10, 19, 28
     final_layer = 28
     model = Model(pretrained_model, final_layer)
 
@@ -140,16 +138,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-# TODO:
-# 1. enhance loaded images
-# 1.5. try different layer activations for different types of features
-# 2. send in random noise, zoom in and scale, send the zoomed in image and repeat to create an animation
-# 2.5. also rotate in the zoom
-# 3. send in a random path in latent space that loops around to itself to create a looping animation
-# 4. random noise, translate and scale, send translate in, repeat
-# 4.5. translate in random direction every iteration
-# 4.6. also rotate the translation
-# 5. combine zooming, translation and rotation
