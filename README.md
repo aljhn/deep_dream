@@ -47,3 +47,17 @@ The final layer to stop the forward pass at will therefore determine the abstrac
   <img src="DreamOutput/Acer28.jpg" width="400">
   <p>Stopping at layer 5, 10, 19 and 28 in the VGG19 model.</p>
 </div>
+
+## Random noise
+
+Randon noise is sent through the deep dreams.
+The output is then center cropped and scaled back to its original size to zoom in,
+before sending the output back through the deep dreams again.
+This iteratve provess can be repeated multiple times to create more detailed images.
+
+<div align="center">
+  <img src="Images/Noise.jpg" width="200">
+  <img src="DreamOutput/Noise_0.jpg" width="200">
+  <img src="DreamOutput/Noise_4.jpg" width="200">
+  <p>Random noise gets progressively more detailed at each iteration.</p> 
+</div>

@@ -8,7 +8,7 @@ import torch.nn as nn
 from torchvision.models import vgg19, VGG19_Weights
 from torchvision.io import read_image
 from torchvision.utils import save_image
-from torchvision.transforms.functional import resize
+from torchvision.transforms.functional import resize, center_crop
 
 seed = 42069
 random.seed(seed)
@@ -60,7 +60,19 @@ def ascend(image, model, lower_clamp, upper_clamp, step_size=0.05, jitter=32):
     return image
 
 
-def deepdream(image, model, preprocess, epochs=10, octaves=4, octave_zoom=1.4):
+def deepdream(image, epochs=10, octaves=4, octave_zoom=1.4):
+    pretrained_weights = VGG19_Weights.DEFAULT
+    pretrained_model = vgg19(weights=pretrained_weights)
+
+    # feature_layers = [5, 10, 19, 28]
+    feature_layers = [28]
+    model = Model(pretrained_model, feature_layers)
+
+    image_height, image_width = image.shape[2:4]
+    preprocess = pretrained_weights.transforms()
+    preprocess.crop_size = [image_height, image_width]
+    preprocess.resize_size = [image_height, image_width]
+
     p_std = torch.tensor(preprocess.std)
     p_mean = torch.tensor(preprocess.mean)
     p_std = torch.reshape(p_std, (1, 3, 1, 1)).to(device)
@@ -98,49 +110,61 @@ def deepdream(image, model, preprocess, epochs=10, octaves=4, octave_zoom=1.4):
     return image
 
 
-def dream(random=False):
-    if random:
-        image = torch.rand((1, 3, 300, 300))
-        image_name = "Noise.jpg"
-    else:
-        image_name = sys.argv[1]
-        image_path = os.path.abspath(image_name)
-        image = read_image(image_path).float() / 255
-        image = image.unsqueeze(0)
-        if image.shape[1] >= 3:
-            image = image[:, 0:3, :, :]
-        image = image.to(device)
+def read_input(image_name):
+    image_path = os.path.abspath(image_name)
+    image = read_image(image_path).float() / 255
+    image = image.unsqueeze(0)
+    if image.shape[1] >= 3:
+        image = image[:, 0:3, :, :]
+    image = image.to(device)
+    return image
 
-    image_height, image_width = image.shape[2:4]
 
-    pretrained_weights = VGG19_Weights.DEFAULT
-    pretrained_model = vgg19(weights=pretrained_weights)
-
-    # feature_layers = [5, 10, 19, 28]
-    feature_layers = [28]
-    model = Model(pretrained_model, feature_layers)
-
-    preprocess = pretrained_weights.transforms()
-    preprocess.crop_size = [image_height, image_width]
-    preprocess.resize_size = [image_height, image_width]
-
-    image = deepdream(image, model, preprocess)
-
-    output_file_path = os.path.join(os.getcwd(), "DreamOutput")
+def save_output(image, image_name, output_folder):
+    output_file_path = os.path.join(os.getcwd(), output_folder)
     if not os.path.isdir(output_file_path):
         os.mkdir(output_file_path)
 
-    image_name = os.path.split(image_name)[-1]
     fp = os.path.join(output_file_path, image_name)
     save_image(image, fp)
 
 
+def dream():
+    image_name = sys.argv[1]
+    image = read_input(image_name)
+
+    dreamed_image = deepdream(image)
+
+    image_name = os.path.split(image_name)[-1]
+    output_folder = "DreamOutput"
+    save_output(dreamed_image, image_name, output_folder)
+
+
+def dive(depth=5, zoom=1.2):
+    image = torch.rand((1, 3, 300, 300))
+    image_name = "Noise.jpg"
+
+    image_height, image_width = image.shape[2:4]
+
+    for i in range(depth):
+        image = deepdream(image)
+
+        output_folder = "DiveOutput"
+        image_name_i = image_name[:-4] + "_" + str(i) + image_name[-4:]
+        save_output(image, image_name_i, output_folder)
+
+        image = center_crop(image, (int(image_height // zoom), int(image_width // zoom)))
+        image = resize(image, (image_height, image_width))
+
+
 def main():
-    if len(sys.argv) == 2:
+    if len(sys.argv) == 1:
+        dive()
+    elif len(sys.argv) == 2:
         dream()
     else:
         print("Argument error.")
-        print("Dream image by running:")
+        print("Deep dream image by running:")
         print(f"python {sys.argv[0]} <image>")
 
 
