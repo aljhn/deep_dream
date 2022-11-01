@@ -57,7 +57,7 @@ This iteratve provess can be repeated multiple times to create more detailed ima
 
 <div align="center">
   <img src="Images/Noise.jpg" width="200">
-  <img src="DreamOutput/Noise_0.jpg" width="200">
-  <img src="DreamOutput/Noise_4.jpg" width="200">
+  <img src="DiveOutput/Noise_0.jpg" width="200">
+  <img src="DiveOutput/Noise_4.jpg" width="200">
   <p>Random noise gets progressively more detailed at each iteration.</p> 
 </div>
